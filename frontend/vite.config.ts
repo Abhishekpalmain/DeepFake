@@ -10,9 +10,18 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    fs: {
+      strict: false,
+    },
+  },
+  optimizeDeps: {
+    force: false,
   },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
   },
 })

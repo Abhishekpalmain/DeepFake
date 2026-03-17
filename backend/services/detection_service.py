@@ -12,8 +12,8 @@ from ..models.schemas import (
     FileType,
     RecentDetection,
 )
-from ..services.detection_engine import DeepfakeDetector
-from ..services.file_service import FileService
+from .detection_engine import DeepfakeDetector
+from .file_service import FileService
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -80,7 +80,7 @@ class DetectionService:
         record = self._get_record(request_id, db)
         try:
             logger.info("Processing video", request_id=request_id)
-            is_df, conf, label, regions, meta = self.detector.detect_video(record.file_path)
+            is_df, conf, label, regions, meta = await self.detector.detect_video(record.file_path)
             self._apply_result(record, is_df, conf, label, regions, meta, db)
         except Exception as e:
             logger.error("Video processing failed", request_id=request_id, error=str(e))
@@ -92,7 +92,7 @@ class DetectionService:
         record = self._get_record(request_id, db)
         try:
             logger.info("Processing image", request_id=request_id)
-            is_df, conf, label, regions, meta = self.detector.detect_image(record.file_path)
+            is_df, conf, label, regions, meta = await self.detector.detect_image(record.file_path)
             self._apply_result(record, is_df, conf, label, regions, meta, db)
         except Exception as e:
             logger.error("Image processing failed", request_id=request_id, error=str(e))
@@ -104,7 +104,7 @@ class DetectionService:
         record = self._get_record(request_id, db)
         try:
             logger.info("Processing audio", request_id=request_id)
-            is_df, conf, label, regions, meta = self.detector.detect_audio(record.file_path)
+            is_df, conf, label, regions, meta = await self.detector.detect_audio(record.file_path)
             self._apply_result(record, is_df, conf, label, regions, meta, db)
         except Exception as e:
             logger.error("Audio processing failed", request_id=request_id, error=str(e))

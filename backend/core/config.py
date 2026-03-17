@@ -1,5 +1,6 @@
 import os
-from typing import List, Optional
+from typing import List
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -22,17 +23,20 @@ class Settings(BaseSettings):
     ALLOWED_IMAGE_TYPES: List[str] = ["image/jpeg", "image/png", "image/webp"]
     ALLOWED_AUDIO_TYPES: List[str] = ["audio/mpeg", "audio/wav", "audio/x-wav", "audio/mp4", "audio/ogg", "audio/flac"]
 
-    # ML Models (optional — falls back to rule-based if not present)
-    MODEL_PATH: str = os.getenv("MODEL_PATH", "./models")
-    VIDEO_MODEL_FILE: str = "video_deepfake_detector.h5"
-    IMAGE_MODEL_FILE: str = "image_deepfake_detector.h5"
+    # External APIs
+    GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
 
     # Processing
     MAX_CONCURRENT_PROCESSING: int = 3
     PROCESSING_TIMEOUT: int = 120  # seconds
 
-    # CORS — comma-separated origins in env
-    ALLOWED_ORIGINS: List[str] = ["*"]
+    # CORS — accepts comma-separated string or JSON list from env
+    ALLOWED_ORIGINS: str = "*"
+
+    @field_validator("ALLOWED_ORIGINS", mode="before")
+    @classmethod
+    def parse_origins(cls, v: str) -> str:
+        return v if isinstance(v, str) else ",".join(v)
 
     # Rate Limiting
     RATE_LIMIT_REQUESTS: int = 60
