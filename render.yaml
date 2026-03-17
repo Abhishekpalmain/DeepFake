@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: deepfake-shield
+    runtime: python
+    rootDir: .
+    buildCommand: >
+      pip install -r backend/requirements.txt &&
+      pip install psycopg2-binary &&
+      cd frontend && npm install && npm run build && cd ..
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: deepfake-shield-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      - key: ENABLE_METRICS
+        value: "false"
+      - key: LOG_LEVEL
+        value: "INFO"
+
+databases:
+  - name: deepfake-shield-db
+    databaseName: deepfake_shield
+    plan: free
