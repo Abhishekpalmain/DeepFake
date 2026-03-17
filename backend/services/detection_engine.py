@@ -23,7 +23,7 @@ def _setup_gemini():
         logger.warning("GOOGLE_API_KEY not set - Gemini calls will fail.")
         return None
     genai.configure(api_key=api_key)
-    return genai.GenerativeModel('gemini-2.5-flash')
+    return genai.GenerativeModel('gemini-2.5-pro')
 
 def _label(confidence: float) -> str:
     """Map confidence score to human-readable label."""
